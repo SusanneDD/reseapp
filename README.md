@@ -1,9 +1,9 @@
-Reseapp – Next.js + TanStack Query + Zod + Tailwind
+# Reseapp – Next.js + TanStack Query + Zod + Tailwind
 
 TL;DR: En snabb och tillgänglig reseapp som listar länder med sök & filter. Varje land har en detaljsida med basfakta, aktuellt väder (OpenWeather via server-proxy), bilder (Unsplash → Pexels fallback) och Wikipedia-intro. Allt är URL-styrt och resilient med Zod-validering.
 
 
-Startsida:
+# Startsida:
 
 Paginerad lista över länder (valbar page size).
 
@@ -14,7 +14,7 @@ Regionfilter: Africa, Americas, Asia, Europe, Oceania, Antarctic, All.
 URL-state: ?page=&pageSize=&query=&region= bevaras vid navigering.
 
 
-Detaljsida /country/[...] :
+# Detaljsida /country/[...] :
 
 Basfakta: flagga (meningsfull alt), namn + officiellt namn (om finns), region/subregion, huvudstad, befolkning, språk, valuta, toppdomän.
 
@@ -27,7 +27,7 @@ Wikipedia: kort sammanfattning + tydlig källhänvisning.
 Laddning/Fel: skeleton/spinner, tydliga felmeddelanden, “Försök igen”.
 
 
-Robusthet:
+# Robusthet:
 
 Zod för att parse:a och säkra datan från alla externa API:er.
 
@@ -36,7 +36,7 @@ Resilient bildsök (sv/eng + “travel” fallback).
 Next/Image med tillåtna remotePatterns.
 
 
-Teknikstack:
+# Teknikstack
 
 Next.js 15 (App Router, TypeScript, src/)
 
@@ -50,7 +50,7 @@ Egna UI-komponenter i shadcn-stil (badge, button, card, input, skeleton, spinner
 
 Next/Image (bildoptimering)
 
-Mappstruktur:
+# Mappstruktur
 .
 ├─ .env.example
 ├─ next.config.ts
@@ -92,7 +92,7 @@ Mappstruktur:
       ├─ types.ts                  # Zod-scheman & typer
       └─ utils.ts                  # hjälpfunktioner (formatNumber m.m.)
 
-Kom igång:
+# Kom igång:
 
 Kopiera miljövariabler
 
@@ -102,12 +102,12 @@ cp .env.example .env.local
 Fyll i dina API-nycklar (se Miljövariabler
 ).
 
-Installera paket:
+# Installera paket:
 
 npm i
 
 
-Starta dev:
+# Starta dev:
 
 npm run dev
 
@@ -169,7 +169,7 @@ ARIA-label där det hjälper.
 
 Tydliga fokusstilar och tangentbordsnavigerbar paginering.
 
-Prestanda:
+# Prestanda:
 
 Next/Image med approved remotePatterns (Unsplash, Pexels, flagcdn, m.fl.).
 
@@ -179,7 +179,7 @@ Skeletons vid laddning för snabb upplevd prestanda.
 
 Små, återanvändbara UI-komponenter.
 
-Felsökning:
+# Felsökning:
 
 Väder visar inget?
 
@@ -200,7 +200,7 @@ Tailwind eller styles saknas?
 
 Verifiera importen av globals.css i layout.tsx.
 
-Deploy:
+# Deploy:
 
 Vercel (rekommenderas):
 
@@ -212,7 +212,7 @@ Deploya. Klart.
 
 Versionshantering
 
-Exempel-workflow:
+# Exempel-workflow:
 
 git checkout -b feat/sokfilter
 # gör ändringar…
@@ -222,7 +222,7 @@ git push -u origin feat/sokfilter
 # öppna Pull Request på GitHub
 
 
-Rekommenderade konventioner:
+# Rekommenderade konventioner:
 
 Prefix: feat:, fix:, chore:, refactor:, docs:, test:.
 
