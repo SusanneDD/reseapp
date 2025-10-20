@@ -2,7 +2,6 @@ Reseapp – Next.js + TanStack Query + Zod + Tailwind
 
 TL;DR: En snabb och tillgänglig reseapp som listar länder med sök & filter. Varje land har en detaljsida med basfakta, aktuellt väder (OpenWeather via server-proxy), bilder (Unsplash → Pexels fallback) och Wikipedia-intro. Allt är URL-styrt och resilient med Zod-validering.
 
-Funktioner:
 
 Startsida:
 
