@@ -1,103 +1,134 @@
-import Image from "next/image";
+"use client";
+import { useQuery } from "@tanstack/react-query";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 
-export default function Home() {
+import CountryCard from "../components/CountryCard";
+import ErrorState from "../components/ErrorState";
+import LoadingGrid from "../components/LoadingGrid";
+import Pagination from "../components/Pagination";
+import RegionFilters from "../components/RegionFilters";
+import SearchBar from "../components/SearchBar";
+import { fetchAllCountries } from "../lib/fetchers";
+import { pageSizeOptions, type Region } from "../lib/utils";
+
+import type { Country } from "../lib/types";
+
+export default function HomePage() {
+  const params = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const page = Math.max(1, parseInt(params.get("page") || "1", 10) || 1);
+  const pageSize = Math.max(1, parseInt(params.get("pageSize") || String(pageSizeOptions[0]), 10));
+  const query = (params.get("query") || "").trim();
+  const region = (params.get("region") || "All") as Region;
+
+  const {
+    data = [],
+    isLoading,
+    error,
+    refetch,
+    isRefetching,
+  } = useQuery<Country[]>({
+    queryKey: ["countries"],
+    queryFn: fetchAllCountries,
+    staleTime: 3600000,
+  });
+
+  const filtered = useMemo<Country[]>(() => {
+    const q = query.toLowerCase();
+    return data
+      .filter((c) => (region === "All" ? true : c.region === region))
+      .filter((c) => (q ? c.name.common.toLowerCase().includes(q) : true))
+      .sort((a, b) => a.name.common.localeCompare(b.name.common));
+  }, [data, query, region]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const pageClamped = Math.min(page, totalPages);
+  const start = (pageClamped - 1) * pageSize;
+  const current = filtered.slice(start, start + pageSize);
+
+  function setParams(next: Record<string, string | number | undefined>) {
+    const sp = new URLSearchParams(params.toString());
+    Object.entries(next).forEach(([k, v]) => {
+      if (v === undefined || v === "" || v === null) sp.delete(k);
+      else sp.set(k, String(v));
+    });
+    router.push(`${pathname}?${sp.toString()}`);
+  }
+  const handleSearch = (nextQuery: string) => setParams({ query: nextQuery || undefined, page: 1 });
+  const handleRegion = (nextRegion: Region) =>
+    setParams({ region: nextRegion === "All" ? undefined : nextRegion, page: 1 });
+  const handlePrev = () => {
+    if (pageClamped > 1) setParams({ page: pageClamped - 1 });
+  };
+  const handleNext = () => {
+    if (pageClamped < totalPages) setParams({ page: pageClamped + 1 });
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <section className="space-y-6" aria-labelledby="countries-heading">
+      <h1 id="countries-heading" className="sr-only">
+        Lista över länder
+      </h1>
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end">
+        <div className="flex-1 w-full">
+          <SearchBar value={query} onChange={handleSearch} />
+          <div className="mt-2 text-xs text-gray-500">Ny sökning nollställer till sida 1.</div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+        <div>
+          <label className="block text-sm font-medium">Page size</label>
+          <select
+            className="rounded-2xl border px-3 py-2 bg-white dark:bg-gray-900"
+            value={pageSize}
+            onChange={(e) => setParams({ pageSize: parseInt(e.target.value, 10), page: 1 })}
+            aria-label="Antal per sida"
+          >
+            {pageSizeOptions.map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <RegionFilters value={region} onChange={handleRegion} />
+
+      {isLoading || isRefetching ? (
+        <LoadingGrid />
+      ) : error ? (
+        <ErrorState
+          message={`Något gick fel när länder hämtades. ${(error as Error)?.message ?? ""}`}
+          onRetry={() => refetch()}
+        />
+      ) : filtered.length === 0 ? (
+        <p role="status" className="text-gray-600">
+          Inga länder matchar dina kriterier.
+        </p>
+      ) : (
+        <>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" role="list">
+            {current.map((c) => (
+              <CountryCard
+                key={c.cca3}
+                code={c.cca3}
+                name={c.name.common}
+                region={c.region ?? "Unknown"}
+                capital={c.capital?.[0] ?? ""}
+                flagUrl={c.flags.png || c.flags.svg || ""}
+              />
+            ))}
+          </ul>
+          <Pagination
+            page={pageClamped}
+            totalPages={totalPages}
+            onPrev={handlePrev}
+            onNext={handleNext}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        </>
+      )}
+    </section>
   );
 }
