@@ -1,4 +1,3 @@
-// file: src/app/layout.tsx
 import "./globals.css";
 import Link from "next/link";
 
@@ -27,9 +26,58 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="container mx-auto max-w-6xl px-4 py-6">{children}</main>
 
           <footer className="border-t mt-10">
-            <div className="container mx-auto max-w-6xl px-4 py-6 text-sm text-gray-500">
-              Byggd med Next.js, TanStack Query, Tailwind. Bilder via Unsplash/Pexels, text via
-              Wikipedia.
+            <div className="container mx-auto max-w-6xl px-4 py-6 text-sm text-gray-600">
+              <p>
+                © 2025 Reseapp. Data:{" "}
+                <a
+                  href="https://restcountries.com"
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  REST Countries
+                </a>
+                {" · "}
+                <a
+                  href="https://openweathermap.org"
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  OpenWeather
+                </a>
+                {" · "}
+                <a
+                  href="https://wikipedia.org"
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Wikipedia
+                </a>
+                {" · "}
+                <a
+                  href="https://unsplash.com"
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Unsplash
+                </a>
+                {" / "}
+                <a
+                  href="https://www.pexels.com"
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Pexels
+                </a>
+                .
+              </p>
+              <p className="mt-1">
+                Detta är en kursuppgift. Innehåll (bilder/texter) ägs av respektive källa.
+              </p>
             </div>
           </footer>
         </Providers>
