@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Reseapp – Next.js + TanStack Query + Zod + Tailwind
 
-## Getting Started
+TL;DR: Lista & filtrera länder, detaljsida med väder (OpenWeather), bilder (Unsplash/Pexels) och Wikipedia-intro. Tillgänglig, snabb, URL-styrd.
 
-First, run the development server:
+Innehåll:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Funktioner
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Teknikstack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Mappstruktur
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Kom igång
 
-## Learn More
+Miljövariabler
 
-To learn more about Next.js, take a look at the following resources:
+Kör lokalt
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+API-routes (server)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Data & validering
 
-## Deploy on Vercel
+Tillgänglighet (a11y)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Prestanda
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Felsökning
+
+Deploy
+
+Versionshantering
+
+Licens
+
+Funktioner:
+
+Startsida: paginerad lista över länder (10–48/sida), sökfält, regionfilter (Africa, Americas, Asia, Europe, Oceania, Antarctic, All).
+
+URL-state: ?page=&pageSize=&query=&region= styr vy och bevaras vid navigering.
+
+Detaljsida (/country/[...]): basfakta, aktuellt väder (OpenWeather via server), minst 3 bilder (Unsplash→Pexels fallback), Wikipedia-summary med källa.
+
+Laddning/fel: skeleton + spinner, tydliga felmeddelanden och “Försök igen”.
+
+Tillgänglighet: semantisk HTML, meningsfulla alt-texter, aria-labels; tangentbordsnavigerbar paginering.
+
+Robusthet: Zod-parse av svar, fallback för latlng, resilient image-sök (sv/eng + “travel”).
+
+Teknikstack:
+
+Next.js 15 (App Router, TypeScript, src/)
+
+Tailwind CSS 4
+
+TanStack Query v5
+
+Zod (schema/validering)
+
+shadcn/ui (egna minimala UI-komponenter)
+
+Next/Image (optimerade bilder)
+
+Mappstruktur:
+src/
+app/
+api/
+countries/route.ts # REST Countries proxy + fallback
+country/route.ts # (om du har den) land enligt code
+images/route.ts # Unsplash + Pexels fallback
+weather/route.ts # OpenWeather proxy (lokal tid)
+country/[...code]/page.tsx
+favicon.ico
+globals.css
+layout.tsx
+page.tsx
+providers.tsx # React Query Provider
+components/
+CountryCard.tsx
+ErrorState.tsx
+LoadingGrid.tsx
+Pagination.tsx
+RegionFilters.tsx
+SearchBar.tsx
+ui/
+badge.tsx
+button.tsx
+card.tsx
+input.tsx
+skeleton.tsx
+lib/
+fetchers.ts # fetch\* helpers som anropar API routes
+types.ts # Zod-scheman + typer
+utils.ts # formatNumber, konstanter
+next.config.ts # images.remotePatterns + turbopack root
+tailwind.config (via v4 preset)
