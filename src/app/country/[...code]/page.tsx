@@ -1,19 +1,19 @@
-// file: src/app/country/[...code]/page.tsx
 "use client";
 
-import type { ReactNode } from "react";
-import { useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 
-import { fetchCountryByCode, fetchImages, fetchWeather, fetchWikiSummary } from "../../../lib/fetchers";
-import { Card, CardContent, CardFooter } from "../../../components/ui/card";
-import { Button } from "../../../components/ui/button";
-import { Skeleton } from "../../../components/ui/skeleton";
 import ErrorState from "../../../components/ErrorState";
+import { Button } from "../../../components/ui/button";
+import { Card, CardContent, CardFooter } from "../../../components/ui/card";
+import { Skeleton } from "../../../components/ui/skeleton";
+import { fetchCountryByCode, fetchImages, fetchWeather, fetchWikiSummary } from "../../../lib/fetchers";
 import { formatNumber } from "../../../lib/types";
+
 import type { Country, UnsplashPhoto, UnsplashSearch, Weather, WikiSummary } from "../../../lib/types";
+
 
 export default function CountryPage() {
   // 1) Hämta landkod från URL
@@ -255,7 +255,7 @@ export default function CountryPage() {
 
 /* ===== Helpers ===== */
 
-type FactProps = { label: string; value: ReactNode };
+type FactProps = { label: string; value: React.ReactNode };
 function Fact({ label, value }: FactProps) {
   return (
     <div className="rounded-xl border p-3">

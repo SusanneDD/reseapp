@@ -75,9 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </a>
                 .
               </p>
-              <p className="mt-1">
-                Detta är en kursuppgift. Innehåll (bilder/texter) ägs av respektive källa.
-              </p>
+            
             </div>
           </footer>
         </Providers>

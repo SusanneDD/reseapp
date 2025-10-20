@@ -1,4 +1,3 @@
-// file: eslint.config.mjs
 import tsParser from "@typescript-eslint/parser";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import importPlugin from "eslint-plugin-import";
