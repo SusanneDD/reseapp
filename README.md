@@ -50,47 +50,6 @@ Egna UI-komponenter i shadcn-stil (badge, button, card, input, skeleton, spinner
 
 Next/Image (bildoptimering)
 
-# Mappstruktur
-.
-├─ .env.example
-├─ next.config.ts
-├─ package.json
-├─ tsconfig.json
-├─ postcss.config.mjs
-├─ eslint.config.mjs
-├─ .prettierrc.json
-├─ .prettierignore
-└─ src/
-   ├─ app/
-   │  ├─ api/
-   │  │  ├─ countries/route.ts     # REST Countries-proxy (+ Zod)
-   │  │  ├─ country/route.ts       # Land via code (om du använder den)
-   │  │  ├─ images/route.ts        # Unsplash + Pexels fallback
-   │  │  └─ weather/route.ts       # OpenWeather-proxy
-   │  ├─ country/[...code]/page.tsx
-   │  ├─ favicon.ico
-   │  ├─ globals.css
-   │  ├─ layout.tsx
-   │  ├─ page.tsx
-   │  └─ providers.tsx             # React Query Provider
-   ├─ components/
-   │  ├─ CountryCard.tsx
-   │  ├─ ErrorState.tsx
-   │  ├─ LoadingGrid.tsx
-   │  ├─ Pagination.tsx
-   │  ├─ RegionFilters.tsx
-   │  ├─ SearchBar.tsx
-   │  └─ ui/
-   │     ├─ badge.tsx
-   │     ├─ button.tsx
-   │     ├─ card.tsx
-   │     ├─ input.tsx
-   │     ├─ skeleton.tsx
-   │     └─ spinner.tsx
-   └─ lib/
-      ├─ fetchers.ts               # fetch* som anropar API-routes
-      ├─ types.ts                  # Zod-scheman & typer
-      └─ utils.ts                  # hjälpfunktioner (formatNumber m.m.)
 
 # Kom igång:
 
