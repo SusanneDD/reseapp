@@ -1,188 +1,206 @@
-# Reseapp – Next.js + TanStack Query + Zod + Tailwind
+# Reseapp
 
-TL;DR: En snabb och tillgänglig reseapp som listar länder med sök & filter. Varje land har en detaljsida med basfakta, aktuellt väder (OpenWeather via server-proxy), bilder (Unsplash → Pexels fallback) och Wikipedia-intro. Allt är URL-styrt och resilient med Zod-validering.
+TL;DR: Lista & filtrera länder, öppna detaljsida med basfakta, aktuellt väder (OpenWeather), bilder (Unsplash/Pexels) och Wikipedia-intro. Tillgänglig, snabb och URL-styrd.
 
+Demo: https://din-produktions-url.vercel.app
 
-# Startsida:
+# Innehåll
 
-Paginerad lista över länder (valbar page size).
+Funktioner
 
-Sökfält (filtrerar på landsnamn).
+Teknikstack
 
-Regionfilter: Africa, Americas, Asia, Europe, Oceania, Antarctic, All.
+Mappstruktur
 
-URL-state: ?page=&pageSize=&query=&region= bevaras vid navigering.
+Kom igång
 
+Miljövariabler
 
-# Detaljsida /country/[...] :
+Köra lokalt
 
-Basfakta: flagga (meningsfull alt), namn + officiellt namn (om finns), region/subregion, huvudstad, befolkning, språk, valuta, toppdomän.
+API-rutter (server)
 
-Väder: OpenWeather (via server-route), fall back till latlng om capitalInfo.latlng saknas.
+Data & validering
 
-Bilder: minst 3 st (Unsplash, med Pexels som fallback).
+Tillgänglighet
 
-Wikipedia: kort sammanfattning + tydlig källhänvisning.
+Prestanda
 
-Laddning/Fel: skeleton/spinner, tydliga felmeddelanden, “Försök igen”.
+Felsökning
 
+Deploy (GitHub → Vercel)
 
-# Robusthet:
+Licens
 
-Zod för att parse:a och säkra datan från alla externa API:er.
+# Funktioner
 
-Resilient bildsök (sv/eng + “travel” fallback).
+Startsida: paginerad lista över länder (konfigurerbar per sida), sökfält, regionfilter (Africa, Americas, Asia, Europe, Oceania, Antarctic, All).
 
-Next/Image med tillåtna remotePatterns.
+URL-state: ?page=&pageSize=&query=&region= bevaras vid navigering & delning.
 
+Detaljsida (/country/[...]):
+Basfakta (flagga, namn/ev. officiellt namn, region/subregion, huvudstad, befolkning, språk, valuta, tld)
+Väder (OpenWeather via serverroute, med lokala koordinater från REST Countries)
+Bilder (minst 3; Unsplash med Pexels-fallback)
+Wikipedia-sammanfattning med källhänvisning
+
+Laddning/fel: skeleton + spinner, tydliga felmeddelanden och “Försök igen”.
+
+A11y: semantisk HTML (<main>, <header>, <nav>, <ul>/<li>, etc), meningsfulla alt-texter, tangentbordsnavigering.
 
 # Teknikstack
 
 Next.js 15 (App Router, TypeScript, src/)
 
-Tailwind CSS v4
-
 TanStack Query v5 (datahämtning/caching)
 
-Zod (schema/validering)
+Tailwind CSS v4 (utility-first UI)
 
-Egna UI-komponenter i shadcn-stil (badge, button, card, input, skeleton, spinner)
+Zod (scheman/validering)
 
-Next/Image (bildoptimering)
+Next/Image (optimerade bilder)
 
+Egna UI-komponenter i src/components/ui/*
 
-# Kom igång:
+# Mappstruktur
+reseapp/
+├─ .gitignore
+├─ .prettierrc.json
+├─ eslint.config.mjs
+├─ next.config.ts
+├─ package.json
+├─ postcss.config.mjs
+├─ README.md
+├─ tsconfig.json
+└─ src/
+   ├─ app/
+   │  ├─ api/
+   │  │  ├─ countries/route.ts     # REST Countries proxy + Zod-parse/fallback
+   │  │  ├─ country/route.ts       # Hämta ett land via code
+   │  │  ├─ images/route.ts        # Unsplash + Pexels fallback
+   │  │  └─ weather/route.ts       # OpenWeather proxy (metriker)
+   │  ├─ country/[...code]/page.tsx
+   │  ├─ globals.css
+   │  ├─ layout.tsx
+   │  ├─ page.tsx                  # Startsida (sök, filter, pagination)
+   │  └─ providers.tsx             # React Query Provider
+   ├─ components/
+   │  ├─ CountryCard.tsx
+   │  ├─ ErrorState.tsx
+   │  ├─ LoadingGrid.tsx
+   │  ├─ Pagination.tsx
+   │  ├─ RegionFilters.tsx
+   │  ├─ SearchBar.tsx
+   │  └─ ui/
+   │     ├─ badge.tsx
+   │     ├─ button.tsx
+   │     ├─ card.tsx
+   │     ├─ input.tsx
+   │     └─ skeleton.tsx
+   └─ lib/
+      ├─ fetchers.ts               # fetch* helpers som anropar API routes
+      ├─ types.ts                  # Zod-scheman + typer
+      └─ utils.ts                  # formatNumber, konstanter
 
-Kopiera miljövariabler
+# Kom igång
+# 1) Installera
+npm ci         # eller: npm install
 
-cp .env.example .env.local
+# 2) Skapa .env.local (se nästa sektion)
+cp .env.example .env.local   # om .env.example finns
+# och fyll i dina riktiga nycklar i .env.local
 
-
-Fyll i dina API-nycklar (se Miljövariabler
-).
-
-# Installera paket:
-
-npm i
-
-
-# Starta dev:
-
+# 3) Kör dev
 npm run dev
 
+# 4) Lint & format (valfritt men bra)
+npm run lint
+npm run format
 
-Öppna: http://localhost:3000
+# Miljövariabler
 
-Miljövariabler
+Skapa .env.local (checka inte in riktiga nycklar i Git):
 
-./.env.local (använd egna nycklar):
-
+OPENWEATHER_API_KEY=din_openweather_nyckel
 UNSPLASH_ACCESS_KEY=din_unsplash_nyckel
 PEXELS_API_KEY=din_pexels_nyckel
-OPENWEATHER_API_KEY=din_openweather_nyckel
 
 
-Tips: Committa aldrig .env.local. Dela endast .env.example utan hemligheter.
+Tips: På Vercel lägger du in dessa under Project → Settings → Environment Variables (Production + Preview + Development) och gör en Redeploy.
 
-Kör lokalt
-# dev
-npm run dev
+# Köra lokalt
+npm run dev        # utvecklingsläge
+npm run build      # produktionsbygge
+npm run start      # starta prod-server lokalt
+npm run lint       # ESLint
+npm run format     # Prettier write
 
-# bygga & starta prod-läge
-npm run build
-npm start
+# API-rutter (server)
 
-# kodkvalitet
-npm run lint        # ESLint
-npm run lint:fix    # ESLint --fix
-npm run format      # Prettier --write
+GET /api/countries – proxy mot REST Countries + Zod-validering
 
+GET /api/country?code=SE – hämta ett land
 
-API-routes (server):
+GET /api/weather?lat=59.33&lon=18.06 – OpenWeather proxy, metriker
 
-GET /api/countries – Hämtar & normaliserar alla länder (REST Countries).
+GET /api/images?query=Sweden – Unsplash med fallback till Pexels
 
-GET /api/country?code=SE – Hämtar ett land via kod (om använd).
+# Bilder: next.config.ts tillåter dessa domäner:
 
-GET /api/weather?lat=..&lon=.. – Proxy till OpenWeather, returnerar nuvarande väder.
+flagcdn.com, upload.wikimedia.org, restcountries.com,
 
-GET /api/images?query=Sweden – Hämtar bilder via Unsplash, fallback Pexels.
+images.unsplash.com, images.pexels.com
 
-Alla routes använder no-store eller rimlig cache & Zod där det är motiverat.
+# Data & validering
 
-Data & validering:
+Zod (src/lib/types.ts) säkerställer att inkommande JSON följer förväntat schema.
 
-Zod-scheman i src/lib/types.ts säkrar att svaren är i rätt form.
+Vi hanterar kända avvikelser (t.ex. capitalInfo.latlng) med säkra fallbacks.
 
-Fält som ofta saknas (t.ex. capitalInfo.latlng) hanteras med fallbacks.
+# Tillgänglighet
 
-Listvy & detaljvy använder TanStack Query med tydlig loading/error-hantering.
+Semantisk HTML överallt (<main>, <header>, <nav>, <ul>/<li>).
 
-Tillgänglighet (a11y)
+Meningsfull alt-text för flaggor och bilder.
 
-Semantisk HTML: <main>, <header>, <nav>, <ul>/<li>, <button>.
+Tangentbordsnavigerbar paginering och trygga fokusstilar.
 
-Meningsfull alt-text för flaggor/bilder.
+ARIA-attribut där det hjälper.
 
-ARIA-label där det hjälper.
+# Prestanda
 
-Tydliga fokusstilar och tangentbordsnavigerbar paginering.
+TanStack Query caching/staleTime för snabb navigering.
 
-# Prestanda:
+Next/Image optimerade bilder, korrekta sizes.
 
-Next/Image med approved remotePatterns (Unsplash, Pexels, flagcdn, m.fl.).
+Lätta UI-komponenter (Tailwind utilities).
 
-Rationell staleTime/cache för listan av länder.
+# Felsökning
 
-Skeletons vid laddning för snabb upplevd prestanda.
+500 på /api/weather → saknad/fel OPENWEATHER_API_KEY eller rate limit.
+Testa direkt i browser: /api/weather?lat=59.33&lon=18.06.
 
-Små, återanvändbara UI-komponenter.
+Inga bilder → saknad/fel UNSPLASH_ACCESS_KEY/PEXELS_API_KEY.
+Testa /api/images?query=France. Se till att images.unsplash.com och images.pexels.com finns i next.config.ts.
+På Unsplash: tillåt din Vercel-domän i appens inställningar om nödvändigt.
 
-# Felsökning:
+Hydration/CSR-varningar → säkerställ att klient-hooks används i Client Components (de här sidorna är redan markerade med "use client").
 
-Väder visar inget?
+# Deploy (GitHub → Vercel)
 
-Kontrollera OPENWEATHER_API_KEY i .env.local.
+Push till GitHub:
 
-Bilder visas inte?
-
-Kontrollera att UNSPLASH_ACCESS_KEY eller PEXELS_API_KEY är ifyllda.
-
-Säkerställ att images.remotePatterns i next.config.ts innehåller:
-images.unsplash.com, images.pexels.com, flagcdn.com, upload.wikimedia.org.
-
-API 400/500?
-
-Kolla serverloggar i terminalen och enskilda API-routes i src/app/api/*.
-
-Tailwind eller styles saknas?
-
-Verifiera importen av globals.css i layout.tsx.
-
-# Deploy:
-
-Vercel (rekommenderas):
-
-Importera repo:t på vercel.com.
-
-Lägg in miljövariablerna för Production.
-
-Deploya. Klart.
-
-Versionshantering
-
-# Exempel-workflow:
-
-git checkout -b feat/sokfilter
-# gör ändringar…
 git add -A
-git commit -m "feat: förbättrad sök + reset page"
-git push -u origin feat/sokfilter
-# öppna Pull Request på GitHub
+git commit -m "feat: första versionen"
+git push origin main
 
 
-# Rekommenderade konventioner:
+På vercel.com: Add New → Project → Importera ditt repo.
 
-Prefix: feat:, fix:, chore:, refactor:, docs:, test:.
+Lägg Environment Variables (se ovan) → Deploy.
 
-Små, meningsfulla commits med tydliga beskrivningar.
+Klart! Nästa git push triggar ny deploy.
+
+# Licens
+
+MIT – använd fritt, men utan garanti.

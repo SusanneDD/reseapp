@@ -1,4 +1,3 @@
-// file: src/app/api/weather/route.ts
 import { NextResponse } from "next/server";
 
 import type { NextRequest } from "next/server";

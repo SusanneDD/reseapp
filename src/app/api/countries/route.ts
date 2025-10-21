@@ -1,17 +1,16 @@
 import { NextResponse } from "next/server";
 
-export const revalidate = 3600; // ISR: cachea svar 1 timme på servern
+export const revalidate = 3600; 
 const BASE = "https://restcountries.com/v3.1";
 
 async function fetchWithFallback() {
-  // 1) Försök med full fältlista (mindre data => snabbare)
+  
   const full =
     "cca3,cca2,name,flags,region,subregion,capital,population,languages,currencies,capitalInfo,latlng,tld";
   let url = `${BASE}/all?fields=${encodeURIComponent(full)}`;
   let res = await fetch(url, { next: { revalidate } });
   if (res.ok) return res.json();
 
-  // 2) 400 → prova minimal uppsättning
   if (res.status === 400) {
     url = `${BASE}/all?fields=${encodeURIComponent(
       "cca3,name,flags,region,capital,capitalInfo,latlng",
@@ -20,7 +19,6 @@ async function fetchWithFallback() {
     if (res.ok) return res.json();
   }
 
-  // 3) Sista försök: helt utan fields
   url = `${BASE}/all`;
   res = await fetch(url, { next: { revalidate } });
   if (res.ok) return res.json();
@@ -34,6 +32,6 @@ async function fetchWithFallback() {
 
 export async function GET() {
   const data = await fetchWithFallback();
-  if (data instanceof NextResponse) return data; // bubbla upp fel-svar
+  if (data instanceof NextResponse) return data; 
   return NextResponse.json(data);
 }
